@@ -34,7 +34,14 @@ Front-End Developer @iAdvize
 
 
 <!-- Qui suis je ? -->
+
 ---
+
+### Rappel rapide de Typescript
+
+* Superset Javascript
+* Compatible avec du JS
+* Compile en JS
 
 ---
 
@@ -82,35 +89,51 @@ C'est le projet typescript-eslint pour la
 
 ---
 
-# Strategies
+# Stratégies de migration
 
 ---
 
-#### En douce 
+#### Méthode 1 : En douce 
 
-Utiliser des fichiers d.ts
+Utiliser des fichiers de déclaration d.ts
 
-https://devblogs.microsoft.com/typescript/how-to-upgrade-to-typescript-without-anybody-noticing-part-2/
+- ajouter @babel/plugin-transform-typescript
+
+- support de la syntaxe
+- pas de typechecking :-(
+
+###### _["How to Upgrade to TypeScript without anybody noticing"](https://devblogs.microsoft.com/typescript/how-to-upgrade-to-typescript-without-anybody-noticing-part-2/)_
 
 
 --- 
 
-### En douceur
+### Méthode 2 : En douceur
 
 On a commencé par l’exterieur:
 -  nos call API, 
-puis les services metier, 
+- les services metier, 
 - la logique redux ( store et action), les sagas, 
 - enfin les composants.
 
+<!-- Mettre ici une image de petit beurre 
+ Commencer à typer progressivement l'app en commencçant par le plus simple et ce qui apporte le plus de bénéfices -->
 
 ---
 
 ##### Declaration Files 
 
-<!--  MEttre ici un exemple de fichier de déclaration-->
+````ts
+declare module 'components-library' {
+    interface IconActionProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
+        icon?: string;
+        className?: string;
+    }
+    class IconAction extends React.Component<IconActionProps> {}
+}
 
-![Marp bg 60%](https://raw.githubusercontent.com/marp-team/marp/master/marp.png)
+````
+
+<!--  MEttre ici un exemple de fichier de déclaration-->
 
 
 
@@ -121,19 +144,24 @@ puis les services metier,
 
 ---
 
-##### Les Enums
+##### Les listes de valeurs
 
-
-````ts
-
+````js
 export const PostCategories = {
   Immobilier: 'Immobilier',
   BonnesAffaires: 'BonnesAffaires',
   Sport: 'Sport',
   Vetements: 'Vetements',
-} as const;
+};
 
+`````
 
+---
+
+###### Option 1 : une enum
+
+````ts
+// en ts
 enum PostCategoryEnum {
     'Immobilier',
     'BonnesAffaires',
@@ -141,16 +169,10 @@ enum PostCategoryEnum {
     'Vetements',
 }
 
-
-export type Valueof<T> = T[keyof T];
-
-export type PostCategoriesEnum = Valueof<typeof PostCategories>
-
-const aCategory: PostCategoriesEnum = 'Vetement';
-
 `````
 
 ````js
+// en js
 
 var PostCategoryEnum;
 (function (PostCategoryEnum) {
@@ -159,16 +181,31 @@ var PostCategoryEnum;
     PostCategoryEnum[PostCategoryEnum["Sport"] = 2] = "Sport";
     PostCategoryEnum[PostCategoryEnum["Vetements"] = 3] = "Vetements";
 })(PostCategoryEnum || (PostCategoryEnum = {}));
-export var PostCategories = {
-    Immobilier: 'Immobilier',
-    BonnesAffaires: 'BonnesAffaires',
-    Sport: 'Sport',
-    Vetements: 'Vetements',
-};
-var aCategory = 'Vetement';
-````
 
---- 
+````
+---
+
+##### Option 2 
+
+````ts 
+ /// ts 
+export const PostCategories = {
+  Immobilier: 'Immobilier',
+  BonnesAffaires: 'BonnesAffaires',
+  Sport: 'Sport',
+  Vetements: 'Vetements',
+} as const;
+
+export type Valueof<T> = T[keyof T];
+
+// 'Immobilier' | 'BonnesAffaires' | 'Sport' | 'Vetements'
+export type PostCategoriesEnum = Valueof<typeof PostCategories> 
+const aCategory: PostCategoriesEnum = 'Vetement';
+
+`````
+---- 
+
+
 
 ### Les Assertions
 
@@ -186,6 +223,9 @@ var foo = <Foo>{}; // juste l'autocomplétion
 var foo:Foo = {}; // autocomplete + complete typechecking
 ````
 
+<!-- Parfois on veut preciser au compilateur quelle entité on manipule
+ --->
+ 
 --- 
 
 #### Migration de Composants
@@ -193,6 +233,9 @@ var foo:Foo = {}; // autocomplete + complete typechecking
 <!-- Typer des composants implique de dédier pas mal de temps à la compréhension de certains concept avancés nottament les types génériques et la composition de type 
 -->
 
+---
+
+### JSX.Element vs ReactNode vs ReactElement?
 
 ---
 
